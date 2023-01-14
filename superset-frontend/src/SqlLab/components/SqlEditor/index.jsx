@@ -74,9 +74,10 @@ import {
 } from 'src/utils/localStorageHelpers';
 import { FeatureFlag, isFeatureEnabled } from 'src/featureFlags';
 import { EmptyStateBig } from 'src/components/EmptyState';
+import getBootstrapData from 'src/utils/getBootstrapData';
 import { isEmpty } from 'lodash';
 import TemplateParamsEditor from '../TemplateParamsEditor';
-import ConnectedSouthPane from '../SouthPane/state';
+import SouthPane from '../SouthPane';
 import SaveQuery from '../SaveQuery';
 import ScheduleQueryButton from '../ScheduleQueryButton';
 import EstimateQueryCostButton from '../EstimateQueryCostButton';
@@ -86,10 +87,7 @@ import AceEditorWrapper from '../AceEditorWrapper';
 import RunQueryActionButton from '../RunQueryActionButton';
 import QueryLimitSelect from '../QueryLimitSelect';
 
-const appContainer = document.getElementById('app');
-const bootstrapData = JSON.parse(
-  appContainer.getAttribute('data-bootstrap') || '{}',
-);
+const bootstrapData = getBootstrapData();
 const validatorMap =
   bootstrapData?.common?.conf?.SQL_VALIDATORS_BY_ENGINE || {};
 const scheduledQueriesConf = bootstrapData?.common?.conf?.SCHEDULED_QUERIES;
@@ -135,7 +133,6 @@ const StyledSidebar = styled.div`
 `;
 
 const propTypes = {
-  actions: PropTypes.object.isRequired,
   tables: PropTypes.array.isRequired,
   queryEditor: PropTypes.object.isRequired,
   defaultQueryLimit: PropTypes.number.isRequired,
@@ -146,7 +143,6 @@ const propTypes = {
 };
 
 const SqlEditor = ({
-  actions,
   tables,
   queryEditor,
   defaultQueryLimit,
@@ -617,10 +613,9 @@ const SqlEditor = ({
           />
           {renderEditorBottomBar(hotkeys)}
         </div>
-        <ConnectedSouthPane
+        <SouthPane
           queryEditorId={queryEditor.id}
           latestQueryId={latestQuery?.id}
-          actions={actions}
           height={southPaneHeight}
           displayLimit={displayLimit}
           defaultQueryLimit={defaultQueryLimit}
